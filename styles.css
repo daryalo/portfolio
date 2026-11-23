@@ -1,0 +1,368 @@
+/* Point at the exact Medium face: the bare family name can resolve to the Outline style */
+@font-face {
+  font-family: "Firs Medium";
+  src: local("TT Firs Neue Trl Medium"), local("TTFirsNeueTrl-Medium"),
+       local("TT Firs Neue Medium"), local("TTFirsNeue-Medium");
+  font-weight: 500;
+}
+
+:root {
+  --text: #3d3c3c;
+  --muted: #a6a6a6;
+  --bg: #f3f3f3;
+  --card-from: #dde4ec;
+  --card-to: #c1d9e7;
+  --radius: 10px;
+  --gap: 12px;
+  --font: "Firs Medium", "Manrope", system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+}
+
+.case-body { background: #f3f3f3; }
+
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+a { color: inherit; text-decoration: none; }
+
+/* Fluid like the reference: side padding scales with the viewport,
+   at 1440 it gives the Figma content width of 1252px */
+.page {
+  --pad: 6.5vw;
+  padding: 64px var(--pad) 128px;
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  background: url("assets/avatar.png") -13px -6px / 106px 106px no-repeat;
+  -webkit-mask: url("assets/avatar-mask.png") 0 0 / 80px 80px no-repeat;
+  mask: url("assets/avatar-mask.png") 0 0 / 80px 80px no-repeat;
+}
+
+.nav {
+  display: flex;
+  gap: 72px;
+  font-size: 22px;
+  color: var(--muted);
+}
+
+.nav a { transition: color .2s ease; }
+.nav a:hover { color: var(--text); }
+
+/* Intro */
+.intro {
+  margin: 0;
+  max-width: 1024px;
+  font-size: 35px;
+  line-height: normal;
+}
+
+.muted { color: var(--muted); }
+
+/* Cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--gap);
+}
+
+.card {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: linear-gradient(var(--card-from), var(--card-to));
+}
+
+.card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+
+.card {
+  container-type: inline-size;
+  color: #fff;
+  isolation: isolate;
+}
+
+.card-title {
+  position: absolute;
+  z-index: 1;
+  top: 7.1%;
+  left: 5.8%;
+  max-width: 88%;
+  overflow: hidden;
+  color: #fff;
+  font-size: clamp(13px, 3.87cqi, 24px);
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card-title-dark { color: #262626; }
+
+.card-tags {
+  position: absolute;
+  z-index: 1;
+  left: 5.8%;
+  bottom: 5.3%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(4px, 1.3cqi, 8px);
+  max-width: 88%;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(5px, 1.3cqi, 8px) clamp(10px, 2.58cqi, 16px);
+  border-radius: 30px;
+  background: rgba(255, 255, 255, .11);
+  color: #fff;
+  font-size: clamp(10px, 2.9cqi, 18px);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.card:nth-child(n + 3) .tag { background: rgba(40, 36, 36, .11); }
+
+/* WebGL bend: the canvas draws the cards, DOM cards stay for layout and links */
+.bend-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.gl-on .card { background: none; z-index: 11; }
+.gl-on .card img.gl-ready,
+.gl-on .story-image.gl-ready { opacity: 0; }
+
+/* Breakpoints follow the reference (Framer): desktop ≥1200, tablet 810–1199, phone <810 */
+@media (max-width: 1199px) {
+  :root { --gap: 6px; }
+  .page { --pad: 30px; gap: 48px; padding-top: 48px; padding-bottom: 96px; }
+  .nav { gap: 40px; font-size: 18px; }
+  .intro { font-size: 28px; }
+}
+
+@media (max-width: 809px) {
+  :root { --gap: 10px; }
+  .page { --pad: 20px; padding-top: 32px; padding-bottom: 64px; gap: 32px; }
+  .avatar {
+    width: 56px;
+    height: 56px;
+    background-position: -9.1px -4.2px;
+    background-size: 74.2px 74.2px;
+    -webkit-mask-size: 56px 56px;
+    mask-size: 56px 56px;
+  }
+  .nav { gap: 20px; font-size: 16px; }
+  .intro { font-size: 22px; }
+  .cards { grid-template-columns: 1fr; }
+}
+
+/* Figma homepage: 1152px content, rounded square cards and compact footer. */
+body.home-body { background: #efeff3; }
+.home-page {
+  --pad: 0px;
+  align-items: center;
+  gap: 72px;
+  padding: 64px 20px 128px;
+}
+.home-header,
+.home-cards,
+.home-footer {
+  width: min(100%, 1152px);
+}
+.home-page .intro {
+  width: min(100%, 962px);
+  max-width: 962px;
+  align-self: flex-start;
+  margin-left: max(0px, calc((100% - 1152px) / 2));
+  font-size: 35px;
+  line-height: normal;
+}
+.home-cards {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.home-cards .card {
+  border-radius: 30px;
+  aspect-ratio: 1;
+}
+.home-cards .card-title {
+  top: 44px;
+  left: 36px;
+  max-width: calc(100% - 72px);
+  overflow: visible;
+  font-size: clamp(14px, 1.67vw, 24px);
+  line-height: 1.35;
+  text-overflow: clip;
+  white-space: normal;
+}
+.home-cards .card-tags {
+  left: 36px;
+  bottom: 36px;
+  gap: 8px;
+  max-width: calc(100% - 72px);
+}
+.home-cards .tag,
+.home-cards .card:nth-child(n + 3) .tag {
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, .45);
+  font-size: 18px;
+}
+.home-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 18px;
+  text-align: left;
+}
+.home-footer > a { order: 0; margin-bottom: 0; }
+.home-socials { order: 0; }
+.home-footer > span { order: 0; }
+.home-footer a { transition: color .2s ease; }
+.home-footer a:hover { color: var(--text); }
+.home-socials {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.home-socials a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.home-socials img {
+  display: block;
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  opacity: .6;
+}
+@media (max-width: 1199px) {
+  .home-page { padding-top: 48px; padding-bottom: 96px; }
+  .home-cards .card-title { top: 5.5%; left: 6%; }
+  .home-cards .card-tags { left: 6%; bottom: 6%; }
+  .home-cards .tag,
+  .home-cards .card:nth-child(n + 3) .tag { font-size: clamp(12px, 1.8vw, 18px); }
+}
+@media (max-width: 809px) {
+  .home-page { gap: 32px; padding: 32px 20px 64px; }
+  .home-page .intro { font-size: 22px; }
+  .home-cards { grid-template-columns: 1fr; gap: 10px; }
+  .home-cards .card-title { font-size: clamp(16px, 5vw, 24px); }
+  .home-cards .tag,
+  .home-cards .card:nth-child(n + 3) .tag { font-size: 14px; }
+  .home-footer {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    font-size: 14px;
+    text-align: center;
+  }
+  .home-footer > a { order: 1; margin-bottom: 16px; }
+  .home-socials { order: 2; }
+  .home-footer > span { order: 3; }
+  .home-socials { gap: 14px; }
+}
+
+
+/* ATOL SIGMA case page: the supplied Figma panels remain single images. */
+.case-page {
+  align-items: center;
+}
+
+.case-header,
+.case-content {
+  width: min(100%, 1152px);
+  max-width: 1152px;
+}
+
+.case-footer { width: min(100%, 1152px); }
+
+.case-content {
+  display: flex;
+  flex-direction: column;
+  gap: 124px;
+}
+
+.case-story {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+}
+
+.story-image {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  object-fit: cover;
+  opacity: 1;
+}
+
+.story-image-narrow { width: min(100%, 1152px); }
+.story-image-full { width: 100%; }
+.story-image-medium { width: min(100%, 1136px); }
+.story-image-rounded { border-radius: clamp(14px, 3.2vw, 40px); }
+
+.case-related { width: 100%; }
+
+@media (max-width: 809px) {
+  .case-content { gap: 72px; }
+  .case-story { gap: 10px; }
+  .story-image-rounded { border-radius: 16px; }
+}
+
+
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .card img {
+    transform: scale(1);
+    transform-origin: center;
+    transition: transform 240ms ease;
+  }
+
+  .card:hover img { transform: scale(1.045); }
+}
